@@ -1,6 +1,8 @@
 package com.zhpan.bannerview.transform
 
+import android.content.res.Resources
 import android.os.Build
+import android.util.TypedValue
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.viewpager2.widget.ViewPager2
@@ -13,11 +15,11 @@ import kotlin.math.max
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class OverlapPageTransformer(
-    private val orientation: Int,
-    private val minScale: Float = 0f,
-    private val unSelectedItemRotation: Float = 0f,
-    private val unSelectedItemAlpha: Float = 0f,
-    private val itemGap: Float = 0f
+        private val orientation: Int,
+        private val minScale: Float = 0f,
+        private val unSelectedItemRotation: Float = 0f,
+        private val unSelectedItemAlpha: Float = 0f,
+        private val itemGap: Float = 0f
 ) : ViewPager2.PageTransformer {
 
     init {
@@ -35,7 +37,7 @@ class OverlapPageTransformer(
 
             if (unSelectedItemRotation != 0f) {
                 val rotation =
-                    (1 - delta) * if (position > 0) unSelectedItemRotation else -unSelectedItemRotation
+                        (1 - delta) * if (position > 0) unSelectedItemRotation else -unSelectedItemRotation
 
                 rotationY = rotation
             }
@@ -49,15 +51,15 @@ class OverlapPageTransformer(
             when (orientation) {
                 ViewPager2.ORIENTATION_HORIZONTAL -> {
                     translationX =
-                        position * (itemGap.toInt() / 2).toPx() +
-                                if (position > 0) {
-                                    (-width * (1f - scale))
-                                } else {
-                                    (width * (1f - scale))
-                                }
+                            position * (dp2px(itemGap) / 2) +
+                                    if (position > 0) {
+                                        (-width * (1f - scale))
+                                    } else {
+                                        (width * (1f - scale))
+                                    }
                 }
                 ViewPager2.ORIENTATION_VERTICAL -> {
-                    translationY = position * (itemGap.toInt()).toPx() +
+                    translationY = position * dp2px(itemGap) +
                             if (position > 0) {
                                 (-width * (1f - scale))
                             } else {
@@ -82,4 +84,11 @@ class OverlapPageTransformer(
         }
     }
 
+    private fun dp2px(dp: Float): Int {
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                Resources.getSystem().displayMetrics
+        ).toInt()
+    }
 }
